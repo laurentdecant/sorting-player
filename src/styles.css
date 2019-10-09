@@ -1,0 +1,24 @@
+html {
+  background: #212121;
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+}
+
+div {
+  display: flex;
+  height: 100%;
+}
+
+ul {
+  align-items: flex-end;
+  display: flex;
+  height: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
