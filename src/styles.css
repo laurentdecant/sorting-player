@@ -22,3 +22,9 @@ ul {
   padding: 0;
   width: 100%;
 }
+
+li {
+  border: 1px solid #212121;
+  border-radius: 2px;
+  box-sizing: border-box;
+}
