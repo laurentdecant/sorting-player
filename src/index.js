@@ -1,11 +1,12 @@
 import "./styles.css";
 
-import { randomize, bubbleSort } from "./algorithms";
+import { randomize, bubbleSort, selectionSort } from "./algorithms";
 import { run } from "./utils";
 
 const LENGTH = 100;
 const DELAY = 5;
 const RED = "#d50000";
+const BLUE = "#2962ff";
 const GREEN = "#00c853";
 
 const initialize = (array, items) => {
@@ -55,3 +56,4 @@ const start = async sort => {
 };
 
 start(bubbleSort);
+start(selectionSort);
