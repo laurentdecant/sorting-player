@@ -18,6 +18,7 @@ const bubbleSort = async (array, render) => {
       }
     }
   }
+  await render();
 };
 
 const selectionSort = async (array, render) => {
@@ -32,8 +33,18 @@ const selectionSort = async (array, render) => {
     [array[i], array[min]] = [array[min], array[i]];
     await render(i, min);
   }
+  await render();
 };
 
-const insertionSort = async (array, render) => {};
+const insertionSort = async (array, render) => {
+  for (let i = 0; i < array.length; i++) {
+    for (let j = i; j > 0 && array[j - 1] > array[j]; j--) {
+      await render(j - 1, j);
+      [array[j - 1], array[j]] = [array[j], array[j - 1]];
+      await render(j - 1, j);
+    }
+  }
+  await render();
+};
 
-export { randomize, bubbleSort, selectionSort };
+export { randomize, bubbleSort, selectionSort, insertionSort };

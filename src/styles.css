@@ -24,7 +24,20 @@ ul {
 }
 
 li {
+  background: white;
   border: 1px solid #212121;
   border-radius: 2px;
   box-sizing: border-box;
+}
+
+.red {
+  background: #d50000;
+}
+
+.green {
+  background: #00c853;
+}
+
+.blue {
+  background: #2962ff;
 }
