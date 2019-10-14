@@ -3,12 +3,12 @@ const randomize = array => {
     array[i] = i + 1;
   }
   for (let i = 0; i < array.length; i++) {
-    const j = Math.floor(Math.random() * (array.length - 1 - i) + i);
+    const j = Math.floor(Math.random() * (array.length - i) + i);
     [array[i], array[j]] = [array[j], array[i]];
   }
 };
 
-const bubbleSort = async (array, render) => {
+const bubbleSort = render => async array => {
   for (let i = array.length - 1; i > 0; i--) {
     for (let j = 0; j < i; j++) {
       await render(j, j + 1);
@@ -21,7 +21,7 @@ const bubbleSort = async (array, render) => {
   await render();
 };
 
-const selectionSort = async (array, render) => {
+const selectionSort = render => async array => {
   for (let i = 0; i < array.length; i++) {
     let min = i;
     for (let j = i + 1; j < array.length; j++) {
@@ -36,7 +36,7 @@ const selectionSort = async (array, render) => {
   await render();
 };
 
-const insertionSort = async (array, render) => {
+const insertionSort = render => async array => {
   for (let i = 0; i < array.length; i++) {
     for (let j = i; j > 0 && array[j - 1] > array[j]; j--) {
       await render(j - 1, j);
@@ -47,4 +47,36 @@ const insertionSort = async (array, render) => {
   await render();
 };
 
-export { randomize, bubbleSort, selectionSort, insertionSort };
+const mergeSort = render => async array => {
+  const aux = new Array(array.length);
+  const merge = async (low, mid, high) => {
+    for (let k = low; k <= high; k += 1) {
+      aux[k] = array[k];
+    }
+    for (let i = low, j = mid + 1, k = low; k <= high; k += 1) {
+      await render(k);
+      if (j > high || (i < mid + 1 && aux[i] < aux[j])) {
+        array[k] = aux[i];
+        i += 1;
+      } else {
+        array[k] = aux[j];
+        j += 1;
+      }
+      await render(k);
+    }
+  };
+
+  const sort = async (low, high) => {
+    if (low < high) {
+      const mid = low + Math.floor((high - low) / 2);
+      await sort(low, mid);
+      await sort(mid + 1, high);
+      await merge(low, mid, high);
+    }
+  };
+
+  await sort(0, array.length - 1);
+  await render();
+};
+
+export { randomize, bubbleSort, selectionSort, insertionSort, mergeSort };

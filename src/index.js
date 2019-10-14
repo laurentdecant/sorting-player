@@ -4,7 +4,8 @@ import {
   randomize,
   bubbleSort,
   selectionSort,
-  insertionSort
+  insertionSort,
+  mergeSort
 } from "./algorithms";
 import { run } from "./utils";
 
@@ -63,10 +64,8 @@ const start = async sort => {
   randomize(array);
   const items = new Array(LENGTH);
   initialize(array, items);
-  await sort(array, render(array, items));
+  await sort(render(array, items))(array);
   finalize(items);
 };
 
-start(bubbleSort);
-start(selectionSort);
-start(insertionSort);
+[bubbleSort, selectionSort, insertionSort, mergeSort].forEach(start);
