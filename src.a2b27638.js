@@ -195,7 +195,7 @@ module.hot.accept(reloadCSS);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.insertionSort = exports.selectionSort = exports.bubbleSort = exports.randomize = void 0;
+exports.heapSort = exports.quickSort = exports.mergeSort = exports.insertionSort = exports.selectionSort = exports.bubbleSort = exports.randomize = void 0;
 
 const randomize = array => {
   for (let i = 0; i < array.length; i++) {
@@ -203,14 +203,14 @@ const randomize = array => {
   }
 
   for (let i = 0; i < array.length; i++) {
-    const j = Math.floor(Math.random() * (array.length - 1 - i) + i);
+    const j = Math.floor(Math.random() * (array.length - i) + i);
     [array[i], array[j]] = [array[j], array[i]];
   }
 };
 
 exports.randomize = randomize;
 
-const bubbleSort = async (array, render) => {
+const bubbleSort = render => async array => {
   for (let i = array.length - 1; i > 0; i--) {
     for (let j = 0; j < i; j++) {
       await render(j, j + 1);
@@ -227,7 +227,7 @@ const bubbleSort = async (array, render) => {
 
 exports.bubbleSort = bubbleSort;
 
-const selectionSort = async (array, render) => {
+const selectionSort = render => async array => {
   for (let i = 0; i < array.length; i++) {
     let min = i;
 
@@ -248,7 +248,7 @@ const selectionSort = async (array, render) => {
 
 exports.selectionSort = selectionSort;
 
-const insertionSort = async (array, render) => {
+const insertionSort = render => async array => {
   for (let i = 0; i < array.length; i++) {
     for (let j = i; j > 0 && array[j - 1] > array[j]; j--) {
       await render(j - 1, j);
@@ -261,6 +261,133 @@ const insertionSort = async (array, render) => {
 };
 
 exports.insertionSort = insertionSort;
+
+const mergeSort = render => async array => {
+  const aux = new Array(array.length);
+
+  const merge = async (low, mid, high) => {
+    for (let k = low; k <= high; k += 1) {
+      await render(k);
+      aux[k] = array[k];
+      await render(k);
+    }
+
+    for (let i = low, j = mid + 1, k = low; k <= high; k += 1) {
+      await render(k);
+
+      if (j > high || i < mid + 1 && aux[i] < aux[j]) {
+        array[k] = aux[i];
+        i += 1;
+      } else {
+        array[k] = aux[j];
+        j += 1;
+      }
+
+      await render(k);
+    }
+  };
+
+  const sort = async (low, high) => {
+    if (low < high) {
+      const mid = low + Math.floor((high - low) / 2);
+      await render(low, mid, high);
+      await sort(low, mid);
+      await sort(mid + 1, high);
+      await merge(low, mid, high);
+    }
+  };
+
+  await sort(0, array.length - 1);
+  await render();
+};
+
+exports.mergeSort = mergeSort;
+
+const heapSort = render => async array => {
+  const sink = async (index, length) => {
+    let parent = index;
+    let child = parent * 2 + 1;
+
+    while (child <= length && (array[parent] < array[child] || array[parent] < array[child + 1])) {
+      await render(parent, child);
+
+      if (child < length && array[child] < array[child + 1]) {
+        child += 1;
+      }
+
+      if (array[parent] < array[child]) {
+        [array[parent], array[child]] = [array[child], array[parent]];
+        await render(parent, child);
+      }
+
+      parent = child;
+      child = child * 2 + 1;
+    }
+  };
+
+  const sort = async () => {
+    for (let i = Math.floor(array.length / 2); i >= 0; i -= 1) {
+      await render(i);
+      await sink(i, array.length - 1);
+    }
+
+    for (let i = array.length - 1; i > 0; i -= 1) {
+      await render(i);
+      [array[0], array[i]] = [array[i], array[0]];
+      await render(0, i);
+      await sink(0, i - 1);
+    }
+  };
+
+  await sort();
+  await render();
+};
+
+exports.heapSort = heapSort;
+
+const quickSort = render => async array => {
+  const partition = async (low, high) => {
+    let i = low + 1;
+    let j = high;
+
+    do {
+      await render(i, j);
+
+      while (i < high && array[i] < array[low]) {
+        await render(i);
+        i += 1;
+      }
+
+      while (j > low && array[j] > array[low]) {
+        await render(j);
+        j -= 1;
+      }
+
+      if (i < j) {
+        [array[i], array[j]] = [array[j], array[i]];
+        await render(i, j);
+      }
+    } while (i < j);
+
+    [array[low], array[j]] = [array[j], array[low]];
+    await render(low, j);
+    return j;
+  };
+
+  const sort = async (low, high) => {
+    if (low < high) {
+      const pivot = await partition(low, high);
+      await render(low, pivot, high);
+      await sort(low, pivot - 1);
+      await sort(pivot + 1, high);
+    }
+  };
+
+  await sort(0, array.length - 1);
+  await render();
+};
+
+exports.quickSort = quickSort;
 },{}],"src/utils.js":[function(require,module,exports) {
 "use strict";
 
@@ -344,13 +471,11 @@ const start = async sort => {
   (0, _algorithms.randomize)(array);
   const items = new Array(LENGTH);
   initialize(array, items);
-  await sort(array, render(array, items));
+  await sort(render(array, items))(array);
   finalize(items);
 };
 
-start(_algorithms.bubbleSort);
-start(_algorithms.selectionSort);
-start(_algorithms.insertionSort);
+[_algorithms.bubbleSort, _algorithms.selectionSort, _algorithms.insertionSort, _algorithms.mergeSort, _algorithms.heapSort, _algorithms.quickSort].forEach(start);
 },{"./styles.css":"src/styles.css","./algorithms":"src/algorithms.js","./utils":"src/utils.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -379,7 +504,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64526" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56000" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
