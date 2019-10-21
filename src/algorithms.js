@@ -51,7 +51,9 @@ const mergeSort = render => async array => {
   const aux = new Array(array.length);
   const merge = async (low, mid, high) => {
     for (let k = low; k <= high; k += 1) {
+      await render(k);
       aux[k] = array[k];
+      await render(k);
     }
     for (let i = low, j = mid + 1, k = low; k <= high; k += 1) {
       await render(k);
@@ -69,6 +71,7 @@ const mergeSort = render => async array => {
   const sort = async (low, high) => {
     if (low < high) {
       const mid = low + Math.floor((high - low) / 2);
+      await render(low, mid, high);
       await sort(low, mid);
       await sort(mid + 1, high);
       await merge(low, mid, high);
@@ -79,4 +82,89 @@ const mergeSort = render => async array => {
   await render();
 };
 
-export { randomize, bubbleSort, selectionSort, insertionSort, mergeSort };
+const heapSort = render => async array => {
+  const sink = async (index, length) => {
+    let parent = index;
+    let child = parent * 2 + 1;
+    while (
+      child <= length &&
+      (array[parent] < array[child] || array[parent] < array[child + 1])
+    ) {
+      await render(parent, child);
+      if (child < length && array[child] < array[child + 1]) {
+        child += 1;
+      }
+      if (array[parent] < array[child]) {
+        [array[parent], array[child]] = [array[child], array[parent]];
+        await render(parent, child);
+      }
+      parent = child;
+      child = child * 2 + 1;
+    }
+  };
+
+  const sort = async () => {
+    for (let i = Math.floor(array.length / 2); i >= 0; i -= 1) {
+      await render(i);
+      await sink(i, array.length - 1);
+    }
+
+    for (let i = array.length - 1; i > 0; i -= 1) {
+      await render(i);
+      [array[0], array[i]] = [array[i], array[0]];
+      await render(0, i);
+      await sink(0, i - 1);
+    }
+  };
+
+  await sort();
+  await render();
+};
+
+const quickSort = render => async array => {
+  const partition = async (low, high) => {
+    let i = low + 1;
+    let j = high;
+    do {
+      await render(i, j);
+      while (i < high && array[i] < array[low]) {
+        await render(i);
+        i += 1;
+      }
+      while (j > low && array[j] > array[low]) {
+        await render(j);
+        j -= 1;
+      }
+      if (i < j) {
+        [array[i], array[j]] = [array[j], array[i]];
+        await render(i, j);
+      }
+    } while (i < j);
+    [array[low], array[j]] = [array[j], array[low]];
+    await render(low, j);
+
+    return j;
+  };
+
+  const sort = async (low, high) => {
+    if (low < high) {
+      const pivot = await partition(low, high);
+      await render(low, pivot, high);
+      await sort(low, pivot - 1);
+      await sort(pivot + 1, high);
+    }
+  };
+
+  await sort(0, array.length - 1);
+  await render();
+};
+
+export {
+  randomize,
+  bubbleSort,
+  selectionSort,
+  insertionSort,
+  mergeSort,
+  quickSort,
+  heapSort
+};

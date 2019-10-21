@@ -5,7 +5,9 @@ import {
   bubbleSort,
   selectionSort,
   insertionSort,
-  mergeSort
+  mergeSort,
+  heapSort,
+  quickSort
 } from "./algorithms";
 import { run } from "./utils";
 
@@ -68,4 +70,11 @@ const start = async sort => {
   finalize(items);
 };
 
-[bubbleSort, selectionSort, insertionSort, mergeSort].forEach(start);
+[
+  bubbleSort,
+  selectionSort,
+  insertionSort,
+  mergeSort,
+  heapSort,
+  quickSort
+].forEach(start);
