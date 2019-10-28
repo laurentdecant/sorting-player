@@ -1,5 +1,6 @@
 html {
   background: #212121;
+  font-family: sans-serif;
   height: 100%;
 }
 
@@ -8,37 +9,52 @@ body {
   margin: 0;
 }
 
-div {
+body > div {
+  height: 100%;
+}
+
+.algorithms {
+  box-sizing: border-box;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   height: 100%;
 }
 
-ul {
+.algorithm {
+  display: flex;
+  flex-direction: column;
+}
+
+.algorithm > h2 {
+  color: white;
+  text-align: center;
+  margin: 0 0 10px 0;
+}
+
+.algorithm > ul {
   align-items: flex-end;
   display: flex;
-  height: 100%;
+  flex-grow: 1;
   list-style: none;
   margin: 0;
   padding: 0;
-  width: 100%;
 }
 
-li {
+.algorithm > ul > li {
   background: white;
   border: 1px solid #212121;
   box-sizing: border-box;
 }
 
-.red {
+.algorithm > ul > li.red {
   background: #d50000;
 }
 
-.green {
+.algorithm > ul > li.green {
   background: #00c853;
 }
 
-.blue {
+.algorithm > ul > li.blue {
   background: #2962ff;
 }

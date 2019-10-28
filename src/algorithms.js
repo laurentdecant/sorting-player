@@ -1,4 +1,5 @@
-const randomize = array => {
+const shuffle = length => {
+  const array = new Array(length);
   for (let i = 0; i < array.length; i++) {
     array[i] = i + 1;
   }
@@ -10,55 +11,60 @@ const randomize = array => {
   return array;
 };
 
-const bubbleSort = render => async array => {
+const bubbleSort = array => {
+  const operations = [];
   for (let i = array.length - 1; i > 0; i--) {
     for (let j = 0; j < i; j++) {
-      await render(j, j + 1);
+      operations.push([array.slice(), [j, j + 1]]);
       if (array[j] > array[j + 1]) {
         [array[j], array[j + 1]] = [array[j + 1], array[j]];
-        await render(j, j + 1);
+        operations.push([array.slice(), [j, j + 1]]);
       }
     }
   }
-  await render();
+
+  return operations;
 };
 
-const selectionSort = render => async array => {
+const selectionSort = array => {
+  const operations = [];
   for (let i = 0; i < array.length; i++) {
     let min = i;
     for (let j = i + 1; j < array.length; j++) {
-      await render(j, min);
+      operations.push([array.slice(), [j, min]]);
       if (array[j] < array[min]) {
         min = j;
       }
     }
     [array[i], array[min]] = [array[min], array[i]];
-    await render(i, min);
+    operations.push([array.slice(), [i, min]]);
   }
-  await render();
+
+  return operations;
 };
 
-const insertionSort = render => async array => {
+const insertionSort = array => {
+  const operations = [];
   for (let i = 0; i < array.length; i++) {
     for (let j = i; j > 0 && array[j - 1] > array[j]; j--) {
-      await render(j - 1, j);
+      operations.push([array.slice(), [j - 1, j]]);
       [array[j - 1], array[j]] = [array[j], array[j - 1]];
-      await render(j - 1, j);
+      operations.push([array.slice(), [j - 1, j]]);
     }
   }
-  await render();
+
+  return operations;
 };
 
-const mergeSort = render => async array => {
+const mergeSort = array => {
+  const operations = [];
   const aux = new Array(array.length);
-  const merge = async (low, mid, high) => {
+  const merge = (low, mid, high) => {
     for (let k = low; k <= high; k += 1) {
-      await render(k);
       aux[k] = array[k];
-      await render(k);
+      operations.push([array.slice(), [k]]);
     }
     for (let i = low, j = mid + 1, k = low; k <= high; k += 1) {
-      await render(k);
       if (j > high || (i < mid + 1 && aux[i] < aux[j])) {
         array[k] = aux[i];
         i += 1;
@@ -66,25 +72,27 @@ const mergeSort = render => async array => {
         array[k] = aux[j];
         j += 1;
       }
-      await render(k);
+      operations.push([array.slice(), [k]]);
     }
   };
 
-  const sort = async (low, high) => {
+  const sort = (low, high) => {
     if (low < high) {
       const mid = low + Math.floor((high - low) / 2);
-      await render(low, mid, high);
-      await sort(low, mid);
-      await sort(mid + 1, high);
-      await merge(low, mid, high);
+      operations.push([array.slice(), [low, mid, high]]);
+      sort(low, mid);
+      sort(mid + 1, high);
+      merge(low, mid, high);
     }
   };
 
-  await sort(0, array.length - 1);
-  await render();
+  sort(0, array.length - 1);
+
+  return operations;
 };
 
-const heapSort = render => async array => {
+const heapSort = array => {
+  const operations = [];
   const sink = async (index, length) => {
     let parent = index;
     let child = parent * 2 + 1;
@@ -92,77 +100,80 @@ const heapSort = render => async array => {
       child <= length &&
       (array[parent] < array[child] || array[parent] < array[child + 1])
     ) {
-      await render(parent, child);
+      operations.push([array.slice(), [parent, child]]);
       if (child < length && array[child] < array[child + 1]) {
         child += 1;
       }
       if (array[parent] < array[child]) {
         [array[parent], array[child]] = [array[child], array[parent]];
-        await render(parent, child);
+        operations.push([array.slice(), [parent, child]]);
       }
       parent = child;
       child = child * 2 + 1;
     }
   };
 
-  const sort = async () => {
+  const sort = () => {
     for (let i = Math.floor(array.length / 2); i >= 0; i -= 1) {
-      await render(i);
-      await sink(i, array.length - 1);
+      operations.push([array.slice(), [i]]);
+      sink(i, array.length - 1);
     }
 
     for (let i = array.length - 1; i > 0; i -= 1) {
-      await render(i);
+      operations.push([array.slice(), [i]]);
       [array[0], array[i]] = [array[i], array[0]];
-      await render(0, i);
-      await sink(0, i - 1);
+      operations.push([array.slice(), [0, i]]);
+      sink(0, i - 1);
     }
   };
 
-  await sort();
-  await render();
+  sort();
+
+  return operations;
 };
 
-const quickSort = render => async array => {
-  const partition = async (low, high) => {
+const quickSort = array => {
+  const operations = [];
+  const partition = (low, high) => {
     let i = low + 1;
     let j = high;
     do {
-      await render(i, j);
+      operations.push([array.slice(), [i, j]]);
       while (i < high && array[i] < array[low]) {
-        await render(i);
+        operations.push([array.slice(), [i]]);
         i += 1;
       }
       while (j > low && array[j] > array[low]) {
-        await render(j);
+        operations.push([array.slice(), [j]]);
         j -= 1;
       }
       if (i < j) {
         [array[i], array[j]] = [array[j], array[i]];
-        await render(i, j);
+        operations.push([array.slice(), [i, j]]);
       }
     } while (i < j);
     [array[low], array[j]] = [array[j], array[low]];
-    await render(low, j);
+    operations.push([array.slice(), [low, j]]);
 
     return j;
   };
 
-  const sort = async (low, high) => {
+  const sort = (low, high) => {
     if (low < high) {
-      const pivot = await partition(low, high);
-      await render(low, pivot, high);
-      await sort(low, pivot - 1);
-      await sort(pivot + 1, high);
+      const pivot = partition(low, high);
+      operations.push([array.slice(), [low, pivot, high]]);
+      sort(low, pivot - 1);
+      sort(pivot + 1, high);
     }
   };
 
-  await sort(0, array.length - 1);
-  await render();
+  sort(0, array.length - 1);
+
+  return operations;
 };
 
 export {
-  randomize,
+  shuffle,
   bubbleSort,
   selectionSort,
   insertionSort,
