@@ -10,8 +10,8 @@ import {
   quickSort
 } from "./algorithms";
 
-const LENGTH = 100;
-const DELAY = 5;
+const LENGTH = 200;
+const DELAY = 10;
 
 const array = shuffle(LENGTH);
 const operations = [
@@ -38,7 +38,7 @@ export default () => {
   }, [indices]);
 
   return (
-    <div className="algorithms">
+    <div className="visualizers">
       {indices.map((value, index) => (
         <Visualizer
           key={index}

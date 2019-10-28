@@ -22,6 +22,7 @@ const bubbleSort = array => {
       }
     }
   }
+  operations.push([array.slice(), []]);
 
   return operations;
 };
@@ -39,6 +40,7 @@ const selectionSort = array => {
     [array[i], array[min]] = [array[min], array[i]];
     operations.push([array.slice(), [i, min]]);
   }
+  operations.push([array.slice(), []]);
 
   return operations;
 };
@@ -52,6 +54,7 @@ const insertionSort = array => {
       operations.push([array.slice(), [j - 1, j]]);
     }
   }
+  operations.push([array.slice(), []]);
 
   return operations;
 };
@@ -75,7 +78,6 @@ const mergeSort = array => {
       operations.push([array.slice(), [k]]);
     }
   };
-
   const sort = (low, high) => {
     if (low < high) {
       const mid = low + Math.floor((high - low) / 2);
@@ -85,8 +87,8 @@ const mergeSort = array => {
       merge(low, mid, high);
     }
   };
-
   sort(0, array.length - 1);
+  operations.push([array.slice(), []]);
 
   return operations;
 };
@@ -112,7 +114,6 @@ const heapSort = array => {
       child = child * 2 + 1;
     }
   };
-
   const sort = () => {
     for (let i = Math.floor(array.length / 2); i >= 0; i -= 1) {
       operations.push([array.slice(), [i]]);
@@ -126,8 +127,8 @@ const heapSort = array => {
       sink(0, i - 1);
     }
   };
-
   sort();
+  operations.push([array.slice(), []]);
 
   return operations;
 };
@@ -157,7 +158,6 @@ const quickSort = array => {
 
     return j;
   };
-
   const sort = (low, high) => {
     if (low < high) {
       const pivot = partition(low, high);
@@ -166,8 +166,8 @@ const quickSort = array => {
       sort(pivot + 1, high);
     }
   };
-
   sort(0, array.length - 1);
+  operations.push([array.slice(), []]);
 
   return operations;
 };

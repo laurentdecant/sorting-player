@@ -10,51 +10,29 @@ body {
 }
 
 body > div {
+  display: flex;
+  flex-direction: column;
   height: 100%;
 }
 
-.algorithms {
+.visualizers {
   box-sizing: border-box;
   display: grid;
+  flex-grow: 1;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  height: 100%;
 }
 
-.algorithm {
+.visualizer {
   display: flex;
   flex-direction: column;
 }
 
-.algorithm > h2 {
-  color: white;
-  text-align: center;
-  margin: 0 0 10px 0;
-}
-
-.algorithm > ul {
+.visualizer > ul {
   align-items: flex-end;
   display: flex;
   flex-grow: 1;
   list-style: none;
   margin: 0;
   padding: 0;
-}
-
-.algorithm > ul > li {
-  background: white;
-  border: 1px solid #212121;
-  box-sizing: border-box;
-}
-
-.algorithm > ul > li.red {
-  background: #d50000;
-}
-
-.algorithm > ul > li.green {
-  background: #00c853;
-}
-
-.algorithm > ul > li.blue {
-  background: #2962ff;
 }
