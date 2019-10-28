@@ -61,9 +61,9 @@ const finalize = async items => {
   }, DELAY);
 };
 
+const randomized = randomize(new Array(LENGTH));
 const start = async sort => {
-  const array = new Array(LENGTH);
-  randomize(array);
+  let array = randomized.slice();
   const items = new Array(LENGTH);
   initialize(array, items);
   await sort(render(array, items))(array);
