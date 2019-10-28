@@ -206,6 +206,8 @@ const randomize = array => {
     const j = Math.floor(Math.random() * (array.length - i) + i);
     [array[i], array[j]] = [array[j], array[i]];
   }
+
+  return array;
 };
 
 exports.randomize = randomize;
@@ -466,9 +468,10 @@ const finalize = async items => {
   }, DELAY);
 };
 
+const randomized = (0, _algorithms.randomize)(new Array(LENGTH));
+
 const start = async sort => {
-  const array = new Array(LENGTH);
-  (0, _algorithms.randomize)(array);
+  let array = randomized.slice();
   const items = new Array(LENGTH);
   initialize(array, items);
   await sort(render(array, items))(array);
@@ -504,7 +507,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56000" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50882" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
