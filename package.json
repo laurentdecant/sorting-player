@@ -1,12 +1,10 @@
 {
-  "name": "parcel-sandbox",
+  "name": "sorting-player",
   "version": "1.0.0",
-  "description": "Simple Parcel Sandbox",
   "main": "index.html",
-  "homepage": "https://laurentdecant.github.io/sorting-visualizer",
   "scripts": {
     "start": "parcel index.html --open",
-    "build": "parcel build index.html --public-url /sorting-visualizer",
+    "build": "parcel build index.html --public-url /sorting-player",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
