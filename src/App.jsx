@@ -10,8 +10,8 @@ import {
   quickSort
 } from "./algorithms";
 
-const LENGTH = 200;
-const DELAY = 10;
+const LENGTH = 100;
+const DELAY = 5;
 
 const array = shuffle(LENGTH);
 const operations = [
@@ -24,28 +24,40 @@ const operations = [
 ];
 
 export default () => {
+  const [isRunning, setIsRunning] = useState(false);
   const [indices, setIndices] = useState(operations.map(() => 0));
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setIndices(
-        indices.map((value, index) =>
-          value < operations[index].length - 1 ? value + 1 : value
-        )
-      );
-    }, DELAY);
-    return () => setTimeout(timeout);
-  }, [indices]);
+    if (isRunning) {
+      const timeout = setTimeout(() => {
+        setIndices(
+          indices.map((value, index) =>
+            value < operations[index].length - 1 ? value + 1 : value
+          )
+        );
+      }, DELAY);
+      return () => setTimeout(timeout);
+    }
+  }, [isRunning, indices]);
+
+  const handleClick = () => {
+    setIsRunning(!isRunning);
+  };
 
   return (
-    <div className="visualizers">
-      {indices.map((value, index) => (
-        <Visualizer
-          key={index}
-          values={operations[index][value][0]}
-          highlights={operations[index][value][1]}
-        />
-      ))}
-    </div>
+    <>
+      <button className="play-button" onClick={handleClick}>
+        <i class="material-icons">{isRunning ? "pause" : "play_arrow"}</i>
+      </button>
+      <div className="visualizers">
+        {indices.map((value, index) => (
+          <Visualizer
+            key={index}
+            values={operations[index][value][0]}
+            highlights={operations[index][value][1]}
+          />
+        ))}
+      </div>
+    </>
   );
 };

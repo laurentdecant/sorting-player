@@ -12,7 +12,7 @@ const shuffle = length => {
 };
 
 const bubbleSort = array => {
-  const operations = [];
+  const operations = [[array.slice(), []]];
   for (let i = array.length - 1; i > 0; i--) {
     for (let j = 0; j < i; j++) {
       operations.push([array.slice(), [j, j + 1]]);
@@ -28,7 +28,7 @@ const bubbleSort = array => {
 };
 
 const selectionSort = array => {
-  const operations = [];
+  const operations = [[array.slice(), []]];
   for (let i = 0; i < array.length; i++) {
     let min = i;
     for (let j = i + 1; j < array.length; j++) {
@@ -46,7 +46,7 @@ const selectionSort = array => {
 };
 
 const insertionSort = array => {
-  const operations = [];
+  const operations = [[array.slice(), []]];
   for (let i = 0; i < array.length; i++) {
     for (let j = i; j > 0 && array[j - 1] > array[j]; j--) {
       operations.push([array.slice(), [j - 1, j]]);
@@ -60,7 +60,7 @@ const insertionSort = array => {
 };
 
 const mergeSort = array => {
-  const operations = [];
+  const operations = [[array.slice(), []]];
   const aux = new Array(array.length);
   const merge = (low, mid, high) => {
     for (let k = low; k <= high; k += 1) {
@@ -94,7 +94,7 @@ const mergeSort = array => {
 };
 
 const heapSort = array => {
-  const operations = [];
+  const operations = [[array.slice(), []]];
   const sink = async (index, length) => {
     let parent = index;
     let child = parent * 2 + 1;
@@ -134,7 +134,7 @@ const heapSort = array => {
 };
 
 const quickSort = array => {
-  const operations = [];
+  const operations = [[array.slice(), []]];
   const partition = (low, high) => {
     let i = low + 1;
     let j = high;

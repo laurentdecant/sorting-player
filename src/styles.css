@@ -13,6 +13,34 @@ body > div {
   display: flex;
   flex-direction: column;
   height: 100%;
+  position: relative;
+}
+
+.play-button {
+  background: transparent;
+  border: 10px solid white;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  height: 100px;
+  left: 50%;
+  position: absolute;
+  outline: none;
+  top: 50%;
+  width: 100px;
+  transform: translate(-50%, -50%);
+}
+
+.play-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.play-button:active {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.play-button > i {
+  font-size: 50px;
 }
 
 .visualizers {
