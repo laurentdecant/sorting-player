@@ -32042,33 +32042,104 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; if (obj != null) { var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-const LENGTH = 100;
-const DELAY = 5;
-const array = (0, _algorithms.shuffle)(LENGTH);
-const operations = [(0, _algorithms.bubbleSort)(array.slice()), (0, _algorithms.selectionSort)(array.slice()), (0, _algorithms.insertionSort)(array.slice()), (0, _algorithms.mergeSort)(array.slice()), (0, _algorithms.heapSort)(array.slice()), (0, _algorithms.quickSort)(array.slice())];
+const LENGTH = 360;
+const DELAY = 16.67;
+const STOPPED = 0;
+const PLAYING = 1;
+const PAUSED = 2;
+let operations = [];
+
+const initialize = () => {
+  const array = (0, _algorithms.shuffle)(LENGTH);
+  operations = [(0, _algorithms.bubbleSort)(array.slice()), (0, _algorithms.selectionSort)(array.slice()), (0, _algorithms.insertionSort)(array.slice()), (0, _algorithms.mergeSort)(array.slice()), (0, _algorithms.heapSort)(array.slice()), (0, _algorithms.quickSort)(array.slice())];
+};
+
+initialize();
 
 var _default = () => {
-  const [isRunning, setIsRunning] = (0, _react.useState)(false);
+  const [prevState, setPrevState] = (0, _react.useState)();
+  const [state, setState] = (0, _react.useState)(STOPPED);
   const [indices, setIndices] = (0, _react.useState)(operations.map(() => 0));
+  const [speed, setSpeed] = (0, _react.useState)(1);
   (0, _react.useEffect)(() => {
-    if (isRunning) {
+    if (state === PLAYING) {
+      const newIndices = indices.map((value, index) => Math.min(Math.max(0, value + speed), operations[index].length - 1));
       const timeout = setTimeout(() => {
-        setIndices(indices.map((value, index) => value < operations[index].length - 1 ? value + 1 : value));
+        setIndices(newIndices);
       }, DELAY);
-      return () => setTimeout(timeout);
-    }
-  }, [isRunning, indices]);
+      const canNext = newIndices.some((value, index) => value < operations[index].length - 1);
 
-  const handleClick = () => {
-    setIsRunning(!isRunning);
+      if (!canNext) {
+        setState(STOPPED);
+      }
+
+      return () => clearTimeout(timeout);
+    }
+  }, [state, indices]);
+
+  const handleSkipPreviousClick = () => {
+    setTimeout(() => {
+      setIndices(operations.map(() => 0));
+    }, DELAY);
   };
 
-  return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement("button", {
-    className: "play-button",
-    onClick: handleClick
+  const handleFastRewindMouseDown = () => {
+    setPrevState(state);
+    setState(PLAYING);
+    setSpeed(-10);
+  };
+
+  const handleFastRewindMouseUp = () => {
+    setState(prevState);
+    setSpeed(1);
+  };
+
+  const handlePlayClick = () => {
+    setState(state === PLAYING ? PAUSED : PLAYING);
+  };
+
+  const handleFastForwardMouseDown = () => {
+    setPrevState(state);
+    setState(PLAYING);
+    setSpeed(10);
+  };
+
+  const handleFastForwardMouseUp = () => {
+    setState(prevState);
+    setSpeed(1);
+  };
+
+  const handleSkipNextClick = () => {
+    setTimeout(() => {
+      setIndices(operations.map(value => value.length - 1));
+    }, DELAY);
+  };
+
+  return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement("div", {
+    className: "controls"
+  }, _react.default.createElement("button", {
+    onClick: handleSkipPreviousClick
   }, _react.default.createElement("i", {
-    class: "material-icons"
-  }, isRunning ? "pause" : "play_arrow")), _react.default.createElement("div", {
+    className: "material-icons"
+  }, "skip_previous")), _react.default.createElement("button", {
+    onMouseDown: handleFastRewindMouseDown,
+    onMouseUp: handleFastRewindMouseUp
+  }, _react.default.createElement("i", {
+    className: "material-icons"
+  }, "fast_rewind")), _react.default.createElement("button", {
+    onClick: handlePlayClick
+  }, _react.default.createElement("i", {
+    className: "material-icons"
+  }, state === PLAYING ? "pause" : "play_arrow")), _react.default.createElement("button", {
+    onMouseDown: handleFastForwardMouseDown,
+    onMouseUp: handleFastForwardMouseUp
+  }, _react.default.createElement("i", {
+    className: "material-icons"
+  }, "fast_forward")), _react.default.createElement("button", {
+    onClick: handleSkipNextClick
+  }, _react.default.createElement("i", {
+    className: "material-icons"
+  }, "skip_next"))), _react.default.createElement("div", {
     className: "visualizers"
   }, indices.map((value, index) => _react.default.createElement(_Visualizer.default, {
     key: index,
@@ -32078,6 +32149,14 @@ var _default = () => {
 };
 
 exports.default = _default;
+
+function usePrevious(value) {
+  const ref = useRef();
+  (0, _react.useEffect)(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
 },{"react":"node_modules/react/index.js","./Visualizer":"src/Visualizer.jsx","./algorithms":"src/algorithms.js"}],"node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
 var bundleURL = null;
 
@@ -32192,7 +32271,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64200" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55198" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

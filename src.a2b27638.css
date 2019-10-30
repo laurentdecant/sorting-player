@@ -16,30 +16,49 @@ body > div {
   position: relative;
 }
 
-.play-button {
+.controls {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
+  display: flex;
+  left: 50%;
+  padding: 20px;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.controls > button {
   background: transparent;
   border: 10px solid white;
   border-radius: 50%;
   color: white;
-  cursor: pointer;
   height: 100px;
-  left: 50%;
-  position: absolute;
   outline: none;
-  top: 50%;
   width: 100px;
-  transform: translate(-50%, -50%);
 }
 
-.play-button:hover {
+.controls > button:disabled {
+  border-color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.controls > button:not(:disabled) {
+  cursor: pointer;
+}
+
+.controls > button:not(:disabled):hover {
   background: rgba(255, 255, 255, 0.25);
 }
 
-.play-button:active {
+.controls > button:not(:disabled):active {
   background: rgba(255, 255, 255, 0.5);
 }
 
-.play-button > i {
+.controls > button:not(:last-of-type) {
+  margin-right: 20px;
+}
+
+.controls > button > i {
   font-size: 50px;
 }
 
