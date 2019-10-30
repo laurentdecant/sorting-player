@@ -1,5 +1,6 @@
 html {
   background: #212121;
+  font-family: sans-serif;
   height: 100%;
 }
 
@@ -8,39 +9,60 @@ body {
   margin: 0;
 }
 
-div {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+body > div {
+  display: flex;
+  flex-direction: column;
   height: 100%;
+  position: relative;
 }
 
-ul {
+.play-button {
+  background: transparent;
+  border: 10px solid white;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  height: 100px;
+  left: 50%;
+  position: absolute;
+  outline: none;
+  top: 50%;
+  width: 100px;
+  transform: translate(-50%, -50%);
+}
+
+.play-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.play-button:active {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.play-button > i {
+  font-size: 50px;
+}
+
+.visualizers {
+  box-sizing: border-box;
+  display: grid;
+  flex-grow: 1;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.visualizer {
+  display: flex;
+  flex-direction: column;
+}
+
+.visualizer > ul {
   align-items: flex-end;
   display: flex;
-  height: 100%;
+  flex-grow: 1;
   list-style: none;
   margin: 0;
   padding: 0;
-  width: 100%;
-}
-
-li {
-  background: white;
-  border: 1px solid #212121;
-  box-sizing: border-box;
-}
-
-.red {
-  background: #d50000;
-}
-
-.green {
-  background: #00c853;
-}
-
-.blue {
-  background: #2962ff;
 }
 
 
