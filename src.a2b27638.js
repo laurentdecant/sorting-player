@@ -32043,10 +32043,11 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; if (obj != null) { var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 const LENGTH = 360;
-const DELAY = 16.67;
+const DELAY = 1000 / 60;
 const STOPPED = 0;
 const PLAYING = 1;
 const PAUSED = 2;
+const SPEED = 1;
 let operations = [];
 
 const initialize = () => {
@@ -32057,60 +32058,59 @@ const initialize = () => {
 initialize();
 
 var _default = () => {
-  const [prevState, setPrevState] = (0, _react.useState)();
   const [state, setState] = (0, _react.useState)(STOPPED);
   const [indices, setIndices] = (0, _react.useState)(operations.map(() => 0));
-  const [speed, setSpeed] = (0, _react.useState)(1);
+  const [speed, setSpeed] = (0, _react.useState)(SPEED);
   (0, _react.useEffect)(() => {
-    if (state === PLAYING) {
-      const newIndices = indices.map((value, index) => Math.min(Math.max(0, value + speed), operations[index].length - 1));
-      const timeout = setTimeout(() => {
-        setIndices(newIndices);
-      }, DELAY);
-      const canNext = newIndices.some((value, index) => value < operations[index].length - 1);
+    switch (state) {
+      case PLAYING:
+        const newIndices = indices.map((value, index) => Math.min(Math.max(0, value + speed), operations[index].length - 1));
+        const canPrevious = newIndices.some(value => value > 0);
+        const canNext = newIndices.some((value, index) => value < operations[index].length - 1);
+        const timeout = setTimeout(() => {
+          setIndices(newIndices);
 
-      if (!canNext) {
-        setState(STOPPED);
-      }
+          if (speed < 0 && !canPrevious || speed > 0 && !canNext) {
+            setState(STOPPED);
+          }
+        }, DELAY);
+        return () => clearTimeout(timeout);
 
-      return () => clearTimeout(timeout);
+      case STOPPED:
+        setSpeed(Math.sign(speed));
     }
   }, [state, indices]);
 
   const handleSkipPreviousClick = () => {
     setTimeout(() => {
+      setState(STOPPED);
       setIndices(operations.map(() => 0));
     }, DELAY);
   };
 
-  const handleFastRewindMouseDown = () => {
-    setPrevState(state);
+  const handleFastRewindClick = () => {
     setState(PLAYING);
-    setSpeed(-10);
+    setSpeed(speed < 0 ? 2 * speed : speed === 1 ? -speed : speed / 2);
   };
 
-  const handleFastRewindMouseUp = () => {
-    setState(prevState);
-    setSpeed(1);
+  const handleReversePlayClick = () => {
+    setState(state === PLAYING ? PAUSED : PLAYING);
+    setSpeed(-SPEED);
   };
 
   const handlePlayClick = () => {
     setState(state === PLAYING ? PAUSED : PLAYING);
+    setSpeed(SPEED);
   };
 
-  const handleFastForwardMouseDown = () => {
-    setPrevState(state);
+  const handleFastForwardClick = () => {
     setState(PLAYING);
-    setSpeed(10);
-  };
-
-  const handleFastForwardMouseUp = () => {
-    setState(prevState);
-    setSpeed(1);
+    setSpeed(speed > 0 ? 2 * speed : speed === -1 ? -speed : speed / 2);
   };
 
   const handleSkipNextClick = () => {
     setTimeout(() => {
+      setState(STOPPED);
       setIndices(operations.map(value => value.length - 1));
     }, DELAY);
   };
@@ -32122,17 +32122,19 @@ var _default = () => {
   }, _react.default.createElement("i", {
     className: "material-icons"
   }, "skip_previous")), _react.default.createElement("button", {
-    onMouseDown: handleFastRewindMouseDown,
-    onMouseUp: handleFastRewindMouseUp
+    onClick: handleFastRewindClick
   }, _react.default.createElement("i", {
     className: "material-icons"
   }, "fast_rewind")), _react.default.createElement("button", {
+    onClick: handleReversePlayClick
+  }, _react.default.createElement("i", {
+    className: "material-icons rotate"
+  }, state === PLAYING ? "pause" : "play_arrow")), _react.default.createElement("button", {
     onClick: handlePlayClick
   }, _react.default.createElement("i", {
     className: "material-icons"
   }, state === PLAYING ? "pause" : "play_arrow")), _react.default.createElement("button", {
-    onMouseDown: handleFastForwardMouseDown,
-    onMouseUp: handleFastForwardMouseUp
+    onClick: handleFastForwardClick
   }, _react.default.createElement("i", {
     className: "material-icons"
   }, "fast_forward")), _react.default.createElement("button", {
@@ -32271,7 +32273,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55198" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58382" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
