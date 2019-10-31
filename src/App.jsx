@@ -11,10 +11,11 @@ import {
 } from "./algorithms";
 
 const LENGTH = 360;
-const DELAY = 16.67;
+const DELAY = 1000 / 60;
 const STOPPED = 0;
 const PLAYING = 1;
 const PAUSED = 2;
+const SPEED = 1;
 
 let operations = [];
 const initialize = () => {
@@ -31,64 +32,64 @@ const initialize = () => {
 initialize();
 
 export default () => {
-  const [prevState, setPrevState] = useState();
   const [state, setState] = useState(STOPPED);
   const [indices, setIndices] = useState(operations.map(() => 0));
-  const [speed, setSpeed] = useState(1);
+  const [speed, setSpeed] = useState(SPEED);
 
   useEffect(() => {
-    if (state === PLAYING) {
-      const newIndices = indices.map((value, index) =>
-        Math.min(Math.max(0, value + speed), operations[index].length - 1)
-      );
-      const timeout = setTimeout(() => {
-        setIndices(newIndices);
-      }, DELAY);
-      const canNext = newIndices.some(
-        (value, index) => value < operations[index].length - 1
-      );
-      if (!canNext) {
-        setState(STOPPED);
-      }
+    switch (state) {
+      case PLAYING:
+        const newIndices = indices.map((value, index) =>
+          Math.min(Math.max(0, value + speed), operations[index].length - 1)
+        );
+        const canPrevious = newIndices.some(value => value > 0);
+        const canNext = newIndices.some(
+          (value, index) => value < operations[index].length - 1
+        );
+        const timeout = setTimeout(() => {
+          setIndices(newIndices);
+          if ((speed < 0 && !canPrevious) || (speed > 0 && !canNext)) {
+            setState(STOPPED);
+          }
+        }, DELAY);
 
-      return () => clearTimeout(timeout);
+        return () => clearTimeout(timeout);
+
+      case STOPPED:
+        setSpeed(Math.sign(speed));
     }
   }, [state, indices]);
 
   const handleSkipPreviousClick = () => {
     setTimeout(() => {
+      setState(STOPPED);
       setIndices(operations.map(() => 0));
     }, DELAY);
   };
 
-  const handleFastRewindMouseDown = () => {
-    setPrevState(state);
+  const handleFastRewindClick = () => {
     setState(PLAYING);
-    setSpeed(-10);
+    setSpeed(speed < 0 ? 2 * speed : speed === 1 ? -speed : speed / 2);
   };
 
-  const handleFastRewindMouseUp = () => {
-    setState(prevState);
-    setSpeed(1);
+  const handleReversePlayClick = () => {
+    setState(state === PLAYING ? PAUSED : PLAYING);
+    setSpeed(-SPEED);
   };
 
   const handlePlayClick = () => {
     setState(state === PLAYING ? PAUSED : PLAYING);
+    setSpeed(SPEED);
   };
 
-  const handleFastForwardMouseDown = () => {
-    setPrevState(state);
+  const handleFastForwardClick = () => {
     setState(PLAYING);
-    setSpeed(10);
-  };
-
-  const handleFastForwardMouseUp = () => {
-    setState(prevState);
-    setSpeed(1);
+    setSpeed(speed > 0 ? 2 * speed : speed === -1 ? -speed : speed / 2);
   };
 
   const handleSkipNextClick = () => {
     setTimeout(() => {
+      setState(STOPPED);
       setIndices(operations.map(value => value.length - 1));
     }, DELAY);
   };
@@ -99,21 +100,20 @@ export default () => {
         <button onClick={handleSkipPreviousClick}>
           <i className="material-icons">skip_previous</i>
         </button>
-        <button
-          onMouseDown={handleFastRewindMouseDown}
-          onMouseUp={handleFastRewindMouseUp}
-        >
+        <button onClick={handleFastRewindClick}>
           <i className="material-icons">fast_rewind</i>
+        </button>
+        <button onClick={handleReversePlayClick}>
+          <i className="material-icons rotate">
+            {state === PLAYING ? "pause" : "play_arrow"}
+          </i>
         </button>
         <button onClick={handlePlayClick}>
           <i className="material-icons">
             {state === PLAYING ? "pause" : "play_arrow"}
           </i>
         </button>
-        <button
-          onMouseDown={handleFastForwardMouseDown}
-          onMouseUp={handleFastForwardMouseUp}
-        >
+        <button onClick={handleFastForwardClick}>
           <i className="material-icons">fast_forward</i>
         </button>
         <button onClick={handleSkipNextClick}>

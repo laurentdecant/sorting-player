@@ -17,11 +17,11 @@ body > div {
 }
 
 .controls {
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 10px;
   display: flex;
   left: 50%;
-  padding: 20px;
+  padding: 10px;
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -29,12 +29,12 @@ body > div {
 
 .controls > button {
   background: transparent;
-  border: 10px solid white;
+  border: 5px solid white;
   border-radius: 50%;
   color: white;
-  height: 100px;
+  height: 50px;
   outline: none;
-  width: 100px;
+  width: 50px;
 }
 
 .controls > button:disabled {
@@ -55,11 +55,11 @@ body > div {
 }
 
 .controls > button:not(:last-of-type) {
-  margin-right: 20px;
+  margin-right: 10px;
 }
 
 .controls > button > i {
-  font-size: 50px;
+  font-size: 25px;
 }
 
 .visualizers {
@@ -82,4 +82,8 @@ body > div {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+.rotate {
+  transform: rotate(180deg);
 }
