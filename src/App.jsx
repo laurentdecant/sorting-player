@@ -10,7 +10,7 @@ import {
   quickSort
 } from "./algorithms";
 
-const LENGTH = 360;
+const LENGTH = 180;
 const DELAY = 1000 / 60;
 const STOPPED = 0;
 const PLAYING = 1;
@@ -37,26 +37,24 @@ export default () => {
   const [speed, setSpeed] = useState(SPEED);
 
   useEffect(() => {
-    switch (state) {
-      case PLAYING:
-        const newIndices = indices.map((value, index) =>
-          Math.min(Math.max(0, value + speed), operations[index].length - 1)
-        );
-        const canPrevious = newIndices.some(value => value > 0);
-        const canNext = newIndices.some(
-          (value, index) => value < operations[index].length - 1
-        );
-        const timeout = setTimeout(() => {
-          setIndices(newIndices);
-          if ((speed < 0 && !canPrevious) || (speed > 0 && !canNext)) {
-            setState(STOPPED);
-          }
-        }, DELAY);
+    if (state === PLAYING) {
+      const newIndices = indices.map((value, index) =>
+        Math.min(Math.max(0, value + speed), operations[index].length - 1)
+      );
+      const canPrevious = newIndices.some(value => value > 0);
+      const canNext = newIndices.some(
+        (value, index) => value < operations[index].length - 1
+      );
+      const timeout = setTimeout(() => {
+        setIndices(newIndices);
+        if ((speed < 0 && !canPrevious) || (speed > 0 && !canNext)) {
+          setState(STOPPED);
+        }
+      }, DELAY);
 
-        return () => clearTimeout(timeout);
-
-      case STOPPED:
-        setSpeed(Math.sign(speed));
+      return () => clearTimeout(timeout);
+    } else if (state === STOPPED) {
+      setSpeed(Math.sign(speed));
     }
   }, [state, indices]);
 
@@ -133,11 +131,3 @@ export default () => {
     </>
   );
 };
-
-function usePrevious(value) {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
-}

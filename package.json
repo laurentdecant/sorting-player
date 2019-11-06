@@ -1,23 +1,29 @@
 {
-  "name": "sorting-player",
+  "name": "sorting-visualizer",
   "version": "1.0.0",
-  "main": "index.html",
-  "scripts": {
-    "start": "parcel index.html --open",
-    "build": "parcel build index.html --public-url /sorting-player",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
-  },
+  "main": "src/index.js",
+  "homepage": "http://laurentdecant.github.io/sorting-visualizer",
   "dependencies": {
-    "gh-pages": "^2.1.1",
-    "react": "^16.11.0",
-    "react-dom": "^16.11.0"
+    "react": "16.8.6",
+    "react-dom": "16.8.6",
+    "react-scripts": "3.0.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.3",
-    "parcel-bundler": "^1.12.4"
+    "gh-pages": "^2.1.1",
+    "typescript": "3.3.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "browserslist": [
-    "last 1 Chrome versions"
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
   ]
 }
