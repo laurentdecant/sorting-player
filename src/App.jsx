@@ -15,7 +15,8 @@ const DELAY = 1000 / 60;
 const STOPPED = 0;
 const PLAYING = 1;
 const PAUSED = 2;
-const SPEED = 1;
+const DEFAULT_SPEED = 1;
+const TITLES = ["Bubble", "Selection", "Insertion", "Merge", "Heap", "Quick"];
 
 let operations = [];
 const initialize = () => {
@@ -34,7 +35,7 @@ initialize();
 export default () => {
   const [state, setState] = useState(STOPPED);
   const [indices, setIndices] = useState(operations.map(() => 0));
-  const [speed, setSpeed] = useState(SPEED);
+  const [speed, setSpeed] = useState(DEFAULT_SPEED);
 
   useEffect(() => {
     if (state === PLAYING) {
@@ -56,7 +57,7 @@ export default () => {
     } else if (state === STOPPED) {
       setSpeed(Math.sign(speed));
     }
-  }, [state, indices]);
+  }, [state, indices, speed]);
 
   const handleSkipPreviousClick = () => {
     setTimeout(() => {
@@ -70,14 +71,9 @@ export default () => {
     setSpeed(speed < 0 ? 2 * speed : speed === 1 ? -speed : speed / 2);
   };
 
-  const handleReversePlayClick = () => {
-    setState(state === PLAYING ? PAUSED : PLAYING);
-    setSpeed(-SPEED);
-  };
-
   const handlePlayClick = () => {
     setState(state === PLAYING ? PAUSED : PLAYING);
-    setSpeed(SPEED);
+    setSpeed(DEFAULT_SPEED);
   };
 
   const handleFastForwardClick = () => {
@@ -94,17 +90,13 @@ export default () => {
 
   return (
     <>
+      <div className={`speed ${state !== PLAYING && "hidden"}`}>{speed}X</div>
       <div className="controls">
         <button onClick={handleSkipPreviousClick}>
           <i className="material-icons">skip_previous</i>
         </button>
         <button onClick={handleFastRewindClick}>
           <i className="material-icons">fast_rewind</i>
-        </button>
-        <button onClick={handleReversePlayClick}>
-          <i className="material-icons rotate">
-            {state === PLAYING ? "pause" : "play_arrow"}
-          </i>
         </button>
         <button onClick={handlePlayClick}>
           <i className="material-icons">
@@ -123,6 +115,7 @@ export default () => {
         {indices.map((value, index) => (
           <Visualizer
             key={index}
+            title={TITLES[index]}
             values={operations[index][value][0]}
             highlights={operations[index][value][1]}
           />

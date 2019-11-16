@@ -1,8 +1,9 @@
 import React from "react";
 
-export default ({ values, highlights }) => {
+export default ({ title, values, highlights }) => {
   return (
     <div className="visualizer">
+      <h2>{title}</h2>
       <ul>
         {values.map((value, index) => (
           <li
